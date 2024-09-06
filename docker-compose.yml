@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/logs:/var/log/nginx
+      - ./www:/var/www/html
+    depends_on:
+      - php
+    networks:
+      - lnmp-network
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: my_database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user_password
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+    networks:
+      - lnmp-network
+
+  php:
+    image: php:7.4-fpm
+    container_name: php
+    volumes:
+      - ./www:/var/www/html
+    networks:
+      - lnmp-network
+
+networks:
+  lnmp-network:
+    driver: bridge
